@@ -1,25 +1,35 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Line } from "react-chartjs-2";
+import { Line, PolarArea } from "react-chartjs-2";
 import {
   Chart as ChartJs,
   LineElement,
   CategoryScale,
   LinearScale,
   PointElement,
+  RadialLinearScale,
+  ArcElement,
 } from "chart.js";
 import CountrySpecMap from "../components/CountrySpecMap";
+import spinner from "../images/spinner.svg";
 
-
-ChartJs.register(LineElement, CategoryScale, LinearScale, PointElement);
+ChartJs.register(
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  RadialLinearScale,
+  ArcElement
+);
 
 type Props = {};
 
 const DashboardPage = (props: Props) => {
+  //fetch historical data
   const {
     data: historicData,
-    isLoading,
-    error,
+    isLoading: isLoadingHistoricData,
+    isError: errorHistoricData,
   } = useQuery({
     queryKey: ["historicalData"],
     queryFn: () =>
@@ -27,23 +37,48 @@ const DashboardPage = (props: Props) => {
         .get("https://disease.sh/v3/covid-19/historical/all?lastdays=all")
         .then((res) => res.data),
   });
-
-  // Handle loading and error states
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error fetching data</div>;
- 
-  // Destructure the data safely
   const { cases = {}, deaths = {}, recovered = {} } = historicData || {};
 
-  const chartData = {
+  // fetch worldwide data
+  const {
+    data: currentData,
+    isLoading: isLoadingCurrentData,
+    error: errorCurrentData,
+  } = useQuery({
+    queryKey: ["currentData"],
+    queryFn: () =>
+      axios.get("https://disease.sh/v3/covid-19/all").then((res) => res.data),
+  });
+
+  const {
+    cases: totalCases,
+    deaths: totalDeaths,
+    recovered: totalRecovered,
+    active: totalActive,
+    critical: totalCritical,
+  } = currentData || {};
+
+  // Handle loading and error states
+  if (isLoadingHistoricData || isLoadingCurrentData)
+    return (
+      <div className="flex justify-center items-center h-full">
+        <img src={spinner} alt="Loading..." />
+      </div>
+    );
+    
+  if (errorHistoricData || errorCurrentData)
+    return <div>Error fetching data</div>;
+
+  // Line chart data
+  const lineChartData = {
     labels: Object.keys(cases), // Dates as labels
     datasets: [
       {
         label: "Cases",
         data: Object.values(cases),
         fill: false,
-        backgroundColor: "blue",
-        borderColor: "blue",
+        borderColor: "rgb(75, 192, 192)",
+        tension: 0.1,
       },
       {
         label: "Deaths",
@@ -62,10 +97,46 @@ const DashboardPage = (props: Props) => {
     ],
   };
 
+  // Polar chart data
+  const polarChartData = {
+    labels: ["Total Cases", "Total Deaths", "Total Recovered", "Total Active", "Total Critical"],
+    datasets: [
+      {
+        label: "COVID-19 Data",
+        data: [totalCases, totalDeaths, totalRecovered, totalActive, totalCritical],
+        backgroundColor: [
+          "rgb(255, 99, 132)",
+          "rgb(255, 205, 86)",
+          "rgb(75, 192, 192)",
+          "rgb(201, 203, 207)",
+          "rgb(54, 162, 235)",
+        ],
+      },
+    ],
+  };
+
   return (
-    <div>
-      <Line data={chartData} />
-    <CountrySpecMap/>
+    <div className="p-4">
+      <div className="bg-white shadow rounded-lg p-8  md:p-9 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="w-full md:w-1/2 h-80 flex flex-col items-center justify-center">
+          <Line data={lineChartData} />
+          <p className="text-center mt-2 text-sm text-gray-600 font-semibold">
+            Line chart displaying the historical COVID-19 cases, deaths, and recoveries over time.
+          </p>
+        </div>
+        <div className="w-full md:w-1/2 h-80 flex flex-col items-center justify-center">
+          <PolarArea data={polarChartData} />
+          <p className="text-center mt-2 text-sm text-gray-600 font-semibold">
+            Polar Area chart showing the current global COVID-19 statistics, including total cases, deaths, recoveries, active cases, and critical cases.
+          </p>
+        </div>
+      </div>
+      <div className="w-full h-80 mt-4">
+        <CountrySpecMap />
+        <p className="text-center mt-2 text-sm text-gray-600 font-semibold">
+          Interactive map displaying COVID-19 data by country, allowing you to explore the impact of the pandemic worldwide.
+        </p>
+      </div>
     </div>
   );
 };
