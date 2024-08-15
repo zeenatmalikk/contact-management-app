@@ -15,9 +15,8 @@ const customIcon = new L.Icon({
   popupAnchor: [0, -32], // Popup anchor
 });
 
-type Props = {};
 
-const CountrySpecMap = (props: Props) => {
+const CountrySpecMap = () => {
   //fetch data from api of covid cases across all countries
   const { data: countryData } = useQuery({
     queryKey: ["countryData"],
