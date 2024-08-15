@@ -62,10 +62,10 @@ const DashboardPage = (props: Props) => {
   if (isLoadingHistoricData || isLoadingCurrentData)
     return (
       <div className="flex justify-center items-center h-full">
-        <img src={spinner} alt="Loading..." />
+        <img className="h-30 w-10" src={spinner} alt="Loading..." />
       </div>
     );
-    
+
   if (errorHistoricData || errorCurrentData)
     return <div>Error fetching data</div>;
 
@@ -99,11 +99,23 @@ const DashboardPage = (props: Props) => {
 
   // Polar chart data
   const polarChartData = {
-    labels: ["Total Cases", "Total Deaths", "Total Recovered", "Total Active", "Total Critical"],
+    labels: [
+      "Total Cases",
+      "Total Deaths",
+      "Total Recovered",
+      "Total Active",
+      "Total Critical",
+    ],
     datasets: [
       {
         label: "COVID-19 Data",
-        data: [totalCases, totalDeaths, totalRecovered, totalActive, totalCritical],
+        data: [
+          totalCases || 0,
+          totalDeaths || 0,
+          totalRecovered || 0,
+          totalActive || 0,
+          totalCritical || 0,
+        ],
         backgroundColor: [
           "rgb(255, 99, 132)",
           "rgb(255, 205, 86)",
@@ -121,20 +133,24 @@ const DashboardPage = (props: Props) => {
         <div className="w-full md:w-1/2 h-80 flex flex-col items-center justify-center">
           <Line data={lineChartData} />
           <p className="text-center mt-2 text-sm text-gray-600 font-semibold">
-            Line chart displaying the historical COVID-19 cases, deaths, and recoveries over time.
+            Line chart displaying the historical COVID-19 cases, deaths, and
+            recoveries over time.
           </p>
         </div>
         <div className="w-full md:w-1/2 h-80 flex flex-col items-center justify-center">
-          <PolarArea data={polarChartData} />
+          <PolarArea className="p-3" data={polarChartData} />
           <p className="text-center mt-2 text-sm text-gray-600 font-semibold">
-            Polar Area chart showing the current global COVID-19 statistics, including total cases, deaths, recoveries, active cases, and critical cases.
+            Polar Area chart showing the current global COVID-19 statistics,
+            including total cases, deaths, recoveries, active cases, and
+            critical cases.
           </p>
         </div>
       </div>
       <div className="w-full h-80 mt-4">
         <CountrySpecMap />
         <p className="text-center mt-2 text-sm text-gray-600 font-semibold">
-          Interactive map displaying COVID-19 data by country, allowing you to explore the impact of the pandemic worldwide.
+          Interactive map displaying COVID-19 data by country, allowing you to
+          explore the impact of the pandemic worldwide.
         </p>
       </div>
     </div>

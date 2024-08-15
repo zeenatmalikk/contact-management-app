@@ -12,6 +12,11 @@ const ContactsPage = () => {
   const contacts = useSelector(
     (state: RootState) => state.allContacts.contacts
   );
+  //email validation check
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
   //state management for adding, editing, and storing the id of the contact
   const [isAdding, setIsAdding] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -42,6 +47,10 @@ const ContactsPage = () => {
   };
   //To save the contact if its new or edit the contact in redux if it was stored already
   const handleSaveClick = () => {
+    if (!validateEmail(formData.mail)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
     if (editMode && currentId) {
       dispatch(
         editContact({
@@ -121,11 +130,12 @@ const ContactsPage = () => {
           <MdCancel className="text-[40px] sm:text-[50px] mr-0 sm:mr-6 text-[#AD3B4A] mb-4 sm:mb-0" />
           <p className="font-bold text-lg sm:text-xl text-center sm:text-left">
             No Contact Found <br />
-            Please add a contact form <br />
+            Please add a contact from <br />
             Create Contact Button
           </p>
         </div>
       )}
+
       {/*form to show when creating a new contact or editing a pre-existing contact */}
       {isAdding && (
         <>
@@ -217,11 +227,12 @@ const ContactsPage = () => {
               </div>
             </div>
           </div>
+          {/* CTA buttons to save, edit and go back to the contact list */}
           <div className="flex items-center gap-5">
             <button
               type="submit"
               onClick={handleBack}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md  transition duration-200 mt-6 mx-auto block sm:inline disabled:bg-slate-500 disabled:cursor-not-allowed"
+              className="bg-yellow text-white px-4 py-2 rounded-md  transition duration-200 mt-6 mx-auto block sm:inline disabled:bg-slate-500 disabled:cursor-not-allowed"
             >
               Back
             </button>
@@ -282,7 +293,7 @@ const ContactsPage = () => {
               <div className="mt-2 w-full">
                 <button
                   onClick={() => handleEditContact(contact.id)}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-3 rounded mr-2 text-sm w-full mt-2"
+                  className="bg-yellow text-white font-bold py-2 px-3 rounded mr-2 text-sm w-full mt-2"
                 >
                   Edit
                 </button>

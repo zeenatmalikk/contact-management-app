@@ -5,7 +5,8 @@ module.exports = {
     extend: {
       colors: {
         sage: "#018270",
-        sageLight:"#3BAD9E"
+        sageLight:"#3BAD9E",
+        yellow:"#eab308",
       },
     },
   },
