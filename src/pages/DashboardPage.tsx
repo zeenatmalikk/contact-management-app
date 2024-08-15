@@ -25,7 +25,7 @@ ChartJs.register(
 type Props = {};
 
 const DashboardPage = (props: Props) => {
-  //fetch historical data
+  //fetch historical data for Line chart----------------------------------------
   const {
     data: historicData,
     isLoading: isLoadingHistoricData,
@@ -39,7 +39,7 @@ const DashboardPage = (props: Props) => {
   });
   const { cases = {}, deaths = {}, recovered = {} } = historicData || {};
 
-  // fetch worldwide data
+  // fetch worldwide data for Polar Chart --------------------------------------
   const {
     data: currentData,
     isLoading: isLoadingCurrentData,
@@ -58,7 +58,7 @@ const DashboardPage = (props: Props) => {
     critical: totalCritical,
   } = currentData || {};
 
-  // Handle loading and error states
+  // Handle loading and error states ----------------------------------------------------
   if (isLoadingHistoricData || isLoadingCurrentData)
     return (
       <div className="flex justify-center items-center h-full">
@@ -69,7 +69,7 @@ const DashboardPage = (props: Props) => {
   if (errorHistoricData || errorCurrentData)
     return <div>Error fetching data</div>;
 
-  // Line chart data
+  // Line chart data ------------------------------------------------------------------
   const lineChartData = {
     labels: Object.keys(cases), // Dates as labels
     datasets: [
@@ -97,7 +97,7 @@ const DashboardPage = (props: Props) => {
     ],
   };
 
-  // Polar chart data
+  // Polar chart data --------------------------------------------------------------
   const polarChartData = {
     labels: [
       "Total Cases",
