@@ -21,13 +21,13 @@ Install the dependencies: npm install
 
 To start the app in development mode, use: npm start
 
-# API Endpoints
+# API Endpoints used
 
-The app communicates with the following API endpoints:
+The app communicates with the following API endpoints to show the covid statistics:
 
-1. World wide data of cases: (https://disease.sh/v3/covid-19/all)
-2. Country Specific data of cases:(https://disease.sh/v3/covid-19/countries)
-3. Graph data for cases with date: (https://disease.sh/v3/covid-19/historical/all?lastdays=all)
+1. World wide data of cases: (https://disease.sh/v3/covid-19/all) *used in polar chart*
+2. Country Specific data of cases:(https://disease.sh/v3/covid-19/countries) *used in map*
+3. Graph data for cases with date: (https://disease.sh/v3/covid-19/historical/all?lastdays=all) *used in line chart*
 
 
 Runs the app in the development mode.\
